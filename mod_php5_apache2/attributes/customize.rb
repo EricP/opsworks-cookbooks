@@ -18,22 +18,7 @@
 #                                         'php-mysql',
 #                                         'php-mcrypt' ]
 
+# try no packages ...?
 normal[:mod_php5_apache2][:packages] = [ 
-    "php56-xml",
-    "php56-common",
-    "php56-xmlrpc",
-    "php56-gd",
-    "php56-cli",
-    "php56-mcrypt",
-    "php56",
-    "php56-devel",
-    "php56-opcache",
-    "php56-mysqlnd",
-    "php56-bcmath",
-    "php56-mbstring",
-    "php56-pdo",
-    "php56-soap",
-    "php56-pecl-memcache",   
-    "php56-jsonc",
-    "php56-process"
+    
     ]
