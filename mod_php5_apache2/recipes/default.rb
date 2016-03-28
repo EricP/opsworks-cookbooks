@@ -21,13 +21,13 @@ bash 'install php56' do
       sudo chkconfig --add httpd
       # CAN'T RESTART it stops the script in place!!!!!!!!!!!!
       # Maybe do another app that's called restart (to just do that)?
-      #sudo service httpd start
-      #sudo service httpd restart
+      sudo service httpd start
+      sudo service httpd restart
       # chkconfig --list
       # action :nothing
     fi
   EOF
-  notifies :restart, resources(:service => 'apache2')
+  #notifies :restart, resources(:service => 'apache2')
   timeout 120
 end
 
