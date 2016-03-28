@@ -21,11 +21,35 @@
 
 bash 'install php56' do
   code <<-EOF
-    
+    INSTALLED="$(which php)"
+    if [[ $INSTALLED != '' ]] ; then
+      echo "PHP IS INSTALLED ..."
+      php -v
+      httpd -v
+      else
+      sudo yum update -y
+      echo "REMOVING LEGACY APACHE & PHP SUPPORT FILES IF THEY EXIST"
+      sudo yum -y erase httpd httpd-tools apr apr-util
+      sudo yum -y remove php-*
+      echo "INSTALLING PHP 5.6 (INCLUDES APACHE 2.4)"
+      sudo yum -y install php56
+      sudo yum -y install php56-opcache php56-mysqlnd php56-bcmath php56-devel php56-gd php56-mbstring php56-mcrypt php56-pdo php56-soap php56-xmlrpc php56-pecl-memcache
+      # Fix apache user to allow httpd commands (outlined in .dev/commands/resolve.perms.sh)
+      sudo useradd -g apache -d /var/www apache
+      #
+      #start for first deply on fresh server?
+      sudo chkconfig httpd on
+      sudo chkconfig --add httpd
+      # CAN'T RESTART it stops the script in place!!!!!!!!!!!!
+      # Maybe do another app that's called restart (to just do that)?
+      #sudo service httpd start
+      #sudo service httpd restart
+      # chkconfig --list
+    fi
   EOF
   action :nothing
   notifies :restart, resources(:service => 'apache2')
-  timeout 70
+  timeout 120
 end
 
 case node[:platform_family]
