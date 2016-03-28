@@ -19,6 +19,15 @@
 
 # debug/test : nullify this file by changing 'rhel' to 'notrhel'
 
+bash 'install php56' do
+  code <<-EOF
+    
+  EOF
+  action :nothing
+  notifies :restart, resources(:service => 'apache2')
+  timeout 70
+end
+
 case node[:platform_family]
 when 'debian'
   package 'libapache2-mod-php5' do
