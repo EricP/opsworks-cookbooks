@@ -27,7 +27,7 @@ bash 'install php56' do
       # action :nothing
     fi
   EOF
-  #notifies :restart, resources(:service => 'apache2')
+  notifies :restart, resources(:service => 'apache2')
   timeout 120
 end
 
