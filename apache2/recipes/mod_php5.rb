@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+# debug/test : nullify this file by changing 'rhel' to 'notrhel'
+
 case node[:platform_family]
 when 'debian'
   package 'libapache2-mod-php5' do
@@ -24,7 +26,7 @@ when 'debian'
     retries 3
     retry_delay 5
   end
-when 'rhel'
+when 'notrhel'
   package 'php' do
     action :install
     retries 3
@@ -46,7 +48,7 @@ when 'rhel'
 end
 
 apache_module 'php5' do
-  if platform_family?('rhel')
+  if platform_family?('notrhel')
     filename 'libphp5.so'
   end
 end
