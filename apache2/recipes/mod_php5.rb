@@ -45,9 +45,9 @@ bash 'install php56' do
       #sudo service httpd start
       #sudo service httpd restart
       # chkconfig --list
+      # action :nothing
     fi
   EOF
-  action :nothing
   notifies :restart, resources(:service => 'apache2')
   timeout 120
 end
