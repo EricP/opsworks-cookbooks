@@ -154,14 +154,14 @@ directory "#{node[:apache][:dir]}/ssl" do
   group 'root'
 end
 
-template "#{node[:apache][:dir]}/envvars" do
-  source 'envvars.erb'
-  owner 'root'
-  group 'root'
-  mode 0644
-  # notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-  # only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
-end
+# template "#{node[:apache][:dir]}/envvars" do
+#   source 'envvars.erb'
+#   owner 'root'
+#   group 'root'
+#   mode 0644
+#   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+#   only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
+# end
 
 # template 'apache2.conf' do
 #   case node[:platform_family]
