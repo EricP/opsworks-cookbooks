@@ -68,16 +68,16 @@ end
 #     not_if 'which php'
 #   end
 
-#   # remove stock config
-#   file File.join(node[:apache][:dir], 'conf.d', 'php.conf') do
-#     action :delete
-#   end
+  # remove stock config
+  file File.join(node[:apache][:dir], 'conf.d', 'php.conf') do
+    action :delete
+  end
 
-#   # replace with debian config
-#   template File.join(node[:apache][:dir], 'mods-available', 'php5.conf') do
-#     source 'mods/php5.conf.erb'
-#     notifies :restart, "service[apache2]"
-#   end
+  # replace with debian config
+  template File.join(node[:apache][:dir], 'mods-available', 'php5.conf') do
+    source 'mods/php5.conf.erb'
+    notifies :restart, "service[apache2]"
+  end
 # end
 
 # apache_module 'php5' do
