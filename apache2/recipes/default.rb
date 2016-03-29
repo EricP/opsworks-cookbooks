@@ -154,14 +154,14 @@ directory "#{node[:apache][:dir]}/ssl" do
   group 'root'
 end
 
-# template "#{node[:apache][:dir]}/envvars" do
-#   source 'envvars.erb'
-#   owner 'root'
-#   group 'root'
-#   mode 0644
-#   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#   only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
-# end
+template "#{node[:apache][:dir]}/envvars" do
+  source 'envvars.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  # notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+  # only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
+end
 
 # template 'apache2.conf' do
 #   case node[:platform_family]
@@ -183,13 +183,13 @@ end
 #     user 'root'
 #   end
 # 
-#   template "#{node[:apache][:dir]}/ports.conf" do
-#     source "ports.conf.erb"
-#     owner 'root'
-#     group 'root'
-#     mode 0644
-#     backup false
-#   end
+#     template "#{node[:apache][:dir]}/ports.conf" do
+#       source "ports.conf.erb"
+#       owner 'root'
+#       group 'root'
+#       mode 0644
+#       backup false
+#     end
 # 
 #   ['security', 'charset'].each do |config|
 #     template "#{node[:apache][:conf_available_dir]}/#{config}.conf" do
@@ -236,11 +236,11 @@ end
 #   end
 # end
 
-# if platform?('ubuntu') && node[:platform_version] == '14.04'
-#   default_site_config = "#{node[:apache][:dir]}/sites-available/000-default.conf"
-# else
-#   default_site_config = "#{node[:apache][:dir]}/sites-available/default"
-# end
+if platform?('ubuntu') && node[:platform_version] == '14.04'
+  default_site_config = "#{node[:apache][:dir]}/sites-available/000-default.conf"
+else
+  default_site_config = "#{node[:apache][:dir]}/sites-available/default"
+end
 # template default_site_config do
 #   source 'default-site.erb'
 #   owner 'root'
@@ -249,25 +249,25 @@ end
 #   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
 # end
 
-# include_recipe 'apache2::mod_status'
-# include_recipe 'apache2::mod_headers'
-# include_recipe 'apache2::mod_alias'
-# include_recipe 'apache2::mod_auth_basic'
-# include_recipe 'apache2::mod_authn_file'
-# include_recipe 'apache2::mod_authz_default' if node[:apache][:version] == '2.2'
-# include_recipe 'apache2::mod_authz_groupfile'
-# include_recipe 'apache2::mod_authz_host'
-# include_recipe 'apache2::mod_authz_user'
-# include_recipe 'apache2::mod_autoindex'
-# include_recipe 'apache2::mod_dir'
-# include_recipe 'apache2::mod_env'
-# include_recipe 'apache2::mod_mime'
-# include_recipe 'apache2::mod_negotiation'
-# include_recipe 'apache2::mod_setenvif'
-# include_recipe 'apache2::mod_log_config' if platform_family?('rhel')
+include_recipe 'apache2::mod_status'
+include_recipe 'apache2::mod_headers'
+include_recipe 'apache2::mod_alias'
+include_recipe 'apache2::mod_auth_basic'
+include_recipe 'apache2::mod_authn_file'
+include_recipe 'apache2::mod_authz_default' if node[:apache][:version] == '2.2'
+include_recipe 'apache2::mod_authz_groupfile'
+include_recipe 'apache2::mod_authz_host'
+include_recipe 'apache2::mod_authz_user'
+include_recipe 'apache2::mod_autoindex'
+include_recipe 'apache2::mod_dir'
+include_recipe 'apache2::mod_env'
+include_recipe 'apache2::mod_mime'
+include_recipe 'apache2::mod_negotiation'
+include_recipe 'apache2::mod_setenvif'
+include_recipe 'apache2::mod_log_config' if platform_family?('rhel')
 # include_recipe 'apache2::mod_ssl'
-# include_recipe 'apache2::mod_expires'
-# include_recipe 'apache2::logrotate'
+include_recipe 'apache2::mod_expires'
+include_recipe 'apache2::logrotate'
 
 # bash 'logdir_existence_and_restart_apache2' do
 #   action :run
@@ -277,6 +277,6 @@ file "#{node[:apache][:document_root]}/index.html" do
   action :delete
   backup false
   only_if do
-    File.exists?("#{node[:apache][:document_root]}/index.html")
+    # File.exists?("#{node[:apache][:document_root]}/index.html")
   end
 end
