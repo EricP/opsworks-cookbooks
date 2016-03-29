@@ -48,7 +48,7 @@ bash 'install php56' do
       # action :nothing
     fi
   EOF
-  notifies :restart, resources(:service => 'apache2')
+  #notifies :restart, resources(:service => 'apache2')
   timeout 120
 end
 
@@ -80,8 +80,8 @@ when 'notrhel'
   end
 end
 
-apache_module 'php5' do
-  if platform_family?('notrhel')
-    filename 'libphp5.so'
-  end
-end
+# apache_module 'php5' do
+#   if platform_family?('notrhel')
+#     filename 'libphp5.so'
+#   end
+# end
