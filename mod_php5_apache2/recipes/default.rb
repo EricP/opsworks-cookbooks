@@ -59,12 +59,12 @@ node[:deploy].each do |application, deploy|
     only_if { platform_family?("rhel") && ::File.exist?("/usr/sbin/getenforce") && OpsWorks::ShellOut.shellout("/usr/sbin/getenforce").strip == "Enforcing" }
   end
 
-  case node[:deploy][application][:database][:type]
-  when "postgresql"
-    include_recipe 'mod_php5_apache2::postgresql_adapter'
-  else # mysql or just backwards compatible
-    include_recipe 'mod_php5_apache2::mysql_adapter'
-  end
+  # case node[:deploy][application][:database][:type]
+  # when "postgresql"
+  #   include_recipe 'mod_php5_apache2::postgresql_adapter'
+  # else # mysql or just backwards compatible
+  #   include_recipe 'mod_php5_apache2::mysql_adapter'
+  # end
 end
 
 include_recipe 'apache2::mod_php5'
