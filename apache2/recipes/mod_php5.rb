@@ -35,7 +35,7 @@ bash 'install php56' do
       sudo yum -y install php56
       sudo yum -y install php56-opcache php56-mysqlnd php56-bcmath php56-devel php56-gd php56-mbstring php56-mcrypt php56-pdo php56-soap php56-xmlrpc php56-pecl-memcache
       # install httpd-tools needed?
-      sudo yum -y install httpd-tools
+      sudo yum -y install httpd-tools apr apr-util
       # Fix apache user to allow httpd commands (outlined in .dev/commands/resolve.perms.sh)
       sudo useradd -g apache -d /var/www apache
       #
@@ -82,8 +82,8 @@ end
   # end
 # end
 
-# apache_module 'php5' do
-#   if platform_family?('rhel')
-#     filename 'libphp5.so'
-#   end
-# end
+apache_module 'php5' do
+  if platform_family?('rhel')
+    filename 'libphp5.so'
+  end
+end
