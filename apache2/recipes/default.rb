@@ -33,65 +33,25 @@ bash 'create httpd dir' do
   EOF
 end
 
-#service 'apache2' do
-#  service_name value_for_platform_family(
-#    'rhel' => 'httpd',
-#    'debian' => 'apache2'
-#  )
-#  action :enable
-#end
-# bash 'install php56' do
-#   code <<-EOF
-#     INSTALLED="$(which php)"
-#     if [[ $INSTALLED != '' ]] ; then
-#       echo "PHP IS INSTALLED ..."
-#       php -v
-#       httpd -v
-#       else
-#       sudo yum update -y
-#       echo "REMOVING LEGACY APACHE & PHP SUPPORT FILES IF THEY EXIST"
-#       sudo yum -y erase httpd httpd-tools apr apr-util
-#       sudo yum -y remove php-*
-#       echo "INSTALLING PHP 5.6 (INCLUDES APACHE 2.4)"
-#       sudo yum -y install php56
-#       sudo yum -y install php56-opcache php56-mysqlnd php56-bcmath php56-devel php56-gd php56-mbstring php56-mcrypt php56-pdo php56-soap php56-xmlrpc php56-pecl-memcache
-#       # Fix apache user to allow httpd commands (outlined in .dev/commands/resolve.perms.sh)
-#       sudo useradd -g apache -d /var/www apache
-#       #
-#       #start for first deply on fresh server?
-#       sudo chkconfig httpd on
-#       sudo chkconfig --add httpd
-#       # CAN'T RESTART it stops the script in place!!!!!!!!!!!!
-#       # Maybe do another app that's called restart (to just do that)?
-#       #sudo service httpd start
-#       #sudo service httpd restart
-#       # chkconfig --list
-#       # action :nothing
-#     fi
-#   EOF
-#   #notifies :restart, resources(:service => 'apache2')
-#   timeout 120
-# end
-
 if platform_family?('debian')
   execute "reset permission of #{node[:apache][:log_dir]}" do
     command "chmod 0755 #{node[:apache][:log_dir]}"
   end
 end
 
-# bash 'logdir_existence_and_restart_apache2' do
-#   code <<-EOF
-#     until
-#       ls -la #{node[:apache][:log_dir]}
-#     do
-#       echo "Waiting for #{node[:apache][:log_dir]}..."
-#       sleep 1
-#     done
-#   EOF
-#   action :nothing
-#   notifies :restart, resources(:service => 'apache2')
-#   timeout 70
-# end
+bash 'logdir_existence_and_restart_apache2' do
+  code <<-EOF
+    until
+      ls -la #{node[:apache][:log_dir]}
+    do
+      echo "Waiting for #{node[:apache][:log_dir]}..."
+      sleep 1
+    done
+  EOF
+  action :nothing
+  notifies :restart, resources(:service => 'apache2')
+  timeout 70
+end
 
 if platform_family?('rhel')
   directory node[:apache][:log_dir] do
@@ -161,100 +121,100 @@ directory "#{node[:apache][:dir]}/ssl" do
   group 'root'
 end
 
-# template "#{node[:apache][:dir]}/envvars" do
-#   source 'envvars.erb'
-#   owner 'root'
-#   group 'root'
-#   mode 0644
-#   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#   only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
-# end
+template "#{node[:apache][:dir]}/envvars" do
+  source 'envvars.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+  only_if { platform?('ubuntu') && node[:platform_version] == '14.04' }
+end
 
-# template 'apache2.conf' do
-#   case node[:platform_family]
-#   when 'rhel'
-#     path "#{node[:apache][:dir]}/conf/httpd.conf"
-#   when 'debian'
-#     path "#{node[:apache][:dir]}/apache2.conf"
-#   end
-#   source 'apache2.conf.erb'
-#   owner 'root'
-#   group 'root'
-#   mode 0644
-#   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-# end
+template 'apache2.conf' do
+  case node[:platform_family]
+  when 'rhel'
+    path "#{node[:apache][:dir]}/conf/httpd.conf"
+  when 'debian'
+    path "#{node[:apache][:dir]}/apache2.conf"
+  end
+  source 'apache2.conf.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+end
 
-# if platform?('ubuntu') && node[:platform_version] == '14.04'
-#   execute 'disable config for serve-cgi-bin' do
-#     command '/usr/sbin/a2disconf serve-cgi-bin'
-#     user 'root'
-#   end
-# 
-#     template "#{node[:apache][:dir]}/ports.conf" do
-#       source "ports.conf.erb"
-#       owner 'root'
-#       group 'root'
-#       mode 0644
-#       backup false
-#     end
-# 
-#   ['security', 'charset'].each do |config|
-#     template "#{node[:apache][:conf_available_dir]}/#{config}.conf" do
-#       source "#{config}.conf.erb"
-#       owner 'root'
-#       group 'root'
-#       mode 0644
-#       backup false
-#     end
-# 
-#     execute "enable config #{config}" do
-#       command "/usr/sbin/a2enconf #{config}"
-#       user 'root'
-#       notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#     end
-#   end
-# else
-#   template 'security' do
-#     path "#{node[:apache][:dir]}/conf.d/security"
-#     source 'security.erb'
-#     owner 'root'
-#     group 'root'
-#     mode 0644
-#     backup false
-#     notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#   end
-# 
-#   template 'charset' do
-#     path "#{node[:apache][:dir]}/conf.d/charset"
-#     source 'charset.erb'
-#     owner 'root'
-#     group 'root'
-#     mode 0644
-#     backup false
-#     notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#   end
-# 
-#   template "#{node[:apache][:dir]}/ports.conf" do
-#     source 'ports.conf.erb'
-#     group 'root'
-#     owner 'root'
-#     mode 0644
-#     notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-#   end
-# end
+if platform?('ubuntu') && node[:platform_version] == '14.04'
+  execute 'disable config for serve-cgi-bin' do
+    command '/usr/sbin/a2disconf serve-cgi-bin'
+    user 'root'
+  end
+
+    template "#{node[:apache][:dir]}/ports.conf" do
+      source "ports.conf.erb"
+      owner 'root'
+      group 'root'
+      mode 0644
+      backup false
+    end
+
+  ['security', 'charset'].each do |config|
+    template "#{node[:apache][:conf_available_dir]}/#{config}.conf" do
+      source "#{config}.conf.erb"
+      owner 'root'
+      group 'root'
+      mode 0644
+      backup false
+    end
+
+    execute "enable config #{config}" do
+      command "/usr/sbin/a2enconf #{config}"
+      user 'root'
+      notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+    end
+  end
+else
+  template 'security' do
+    path "#{node[:apache][:dir]}/conf.d/security"
+    source 'security.erb'
+    owner 'root'
+    group 'root'
+    mode 0644
+    backup false
+    notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+  end
+
+  template 'charset' do
+    path "#{node[:apache][:dir]}/conf.d/charset"
+    source 'charset.erb'
+    owner 'root'
+    group 'root'
+    mode 0644
+    backup false
+    notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+  end
+
+  template "#{node[:apache][:dir]}/ports.conf" do
+    source 'ports.conf.erb'
+    group 'root'
+    owner 'root'
+    mode 0644
+    notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+  end
+end
 
 if platform?('ubuntu') && node[:platform_version] == '14.04'
   default_site_config = "#{node[:apache][:dir]}/sites-available/000-default.conf"
 else
   default_site_config = "#{node[:apache][:dir]}/sites-available/default"
 end
-# template default_site_config do
-#   source 'default-site.erb'
-#   owner 'root'
-#   group 'root'
-#   mode 0644
-#   notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
-# end
+template default_site_config do
+  source 'default-site.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  notifies :run, resources(:bash => 'logdir_existence_and_restart_apache2')
+end
 
 include_recipe 'apache2::mod_status'
 include_recipe 'apache2::mod_headers'
@@ -276,9 +236,9 @@ include_recipe 'apache2::mod_log_config' if platform_family?('rhel')
 include_recipe 'apache2::mod_expires'
 include_recipe 'apache2::logrotate'
 
-# bash 'logdir_existence_and_restart_apache2' do
-#   action :run
-# end
+bash 'logdir_existence_and_restart_apache2' do
+  action :run
+end
 
 file "#{node[:apache][:document_root]}/index.html" do
   action :delete
