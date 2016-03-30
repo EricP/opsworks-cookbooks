@@ -99,12 +99,12 @@ if platform_family?('rhel')
     action :create
   end
 
-#   cookbook_file '/usr/local/bin/apache2_module_conf_generate.pl' do
-#     source 'apache2_module_conf_generate.pl'
-#     mode 0755
-#     owner 'root'
-#     group 'root'
-#   end
+  cookbook_file '/usr/local/bin/apache2_module_conf_generate.pl' do
+    source 'apache2_module_conf_generate.pl'
+    mode 0755
+    owner 'root'
+    group 'root'
+  end
 
   ['sites-available','sites-enabled','mods-available','mods-enabled'].each do |dir|
     directory "#{node[:apache][:dir]}/#{dir}" do
