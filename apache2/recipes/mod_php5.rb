@@ -35,7 +35,7 @@ bash 'install php56' do
       sudo yum -y install php56
       sudo yum -y install php56-opcache php56-mysqlnd php56-bcmath php56-devel php56-gd php56-mbstring php56-mcrypt php56-pdo php56-soap php56-xmlrpc php56-pecl-memcache
       # install httpd-tools needed?
-      # yum -y install httpd-tools
+      sudo yum -y install httpd-tools
       # Fix apache user to allow httpd commands (outlined in .dev/commands/resolve.perms.sh)
       sudo useradd -g apache -d /var/www apache
       #
