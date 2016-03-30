@@ -24,14 +24,14 @@
 #  action :install
 #end
 
-# include_recipe 'apache2::service'
-
 bash 'create httpd dir' do
   code <<-EOF
     # Add mkdir to support creation of /etc/httpd/sites-available
     sudo mkdir -p /etc/httpd
   EOF
 end
+
+include_recipe 'apache2::service'
 
 if platform_family?('debian')
   execute "reset permission of #{node[:apache][:log_dir]}" do
