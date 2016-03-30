@@ -69,14 +69,15 @@ if platform_family?('rhel')
     group 'root'
   end
 
-  ['sites-available','sites-enabled','mods-available','mods-enabled'].each do |dir|
-    directory "#{node[:apache][:dir]}/#{dir}" do
-      mode 0755
-      owner 'root'
-      group 'root'
-      action :create
-    end
-  end
+  # shit ...
+  # ['sites-available','sites-enabled','mods-available','mods-enabled'].each do |dir|
+  #   directory "#{node[:apache][:dir]}/#{dir}" do
+  #     mode 0755
+  #     owner 'root'
+  #     group 'root'
+  #     action :create
+  #   end
+  # end
 
   execute 'generate-module-list' do
     if node[:kernel][:machine] == 'x86_64'
