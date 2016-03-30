@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-# debug/test : nullify this file by changing 'rhel' to 'notrhel'
-
 bash 'install php56' do
   code <<-EOF
     INSTALLED="$(which php)"
