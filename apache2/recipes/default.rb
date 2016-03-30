@@ -29,6 +29,8 @@ bash 'create httpd dir' do
     # Add mkdir to support creation of /etc/httpd/sites-available
     # sudo mkdir -p /etc/httpd
     sudo mkdir -p /etc/httpd/conf
+    sudo mkdir -p /etc/httpd/conf.d
+    sudo mkdir -p /etc/init.d
   EOF
 end
 
