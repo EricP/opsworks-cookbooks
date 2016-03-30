@@ -26,6 +26,13 @@
 
 # include_recipe 'apache2::service'
 
+bash 'create httpd dir' do
+  code <<-EOF
+    # Add mkdir to support creation of /etc/httpd/sites-available
+    sudo mkdir -p /etc/httpd
+  EOF
+end
+
 #service 'apache2' do
 #  service_name value_for_platform_family(
 #    'rhel' => 'httpd',
