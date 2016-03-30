@@ -30,7 +30,7 @@ bash 'install php56' do
       sudo yum -y erase httpd httpd-tools apr apr-util
       sudo yum -y remove php-*
       # Added mkdir to support creation of /etc/httpd/sites-available
-      sudo mkdir -p /etc/httpd
+      # sudo mkdir -p /etc/httpd
       echo "INSTALLING PHP 5.6 (INCLUDES APACHE 2.4)"
       sudo yum -y install php56
       sudo yum -y install php56-opcache php56-mysqlnd php56-bcmath php56-devel php56-gd php56-mbstring php56-mcrypt php56-pdo php56-soap php56-xmlrpc php56-pecl-memcache
